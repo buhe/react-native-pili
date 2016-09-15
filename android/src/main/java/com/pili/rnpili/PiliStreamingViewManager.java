@@ -20,11 +20,6 @@ import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
-import com.pili.pldroid.streaming.CameraStreamingManager;
-import com.pili.pldroid.streaming.CameraStreamingSetting;
-import com.pili.pldroid.streaming.MicrophoneStreamingSetting;
-import com.pili.pldroid.streaming.StreamingProfile;
-import com.pili.pldroid.streaming.widget.AspectFrameLayout;
 import com.pili.rnpili.support.Config;
 import com.pili.rnpili.support.FocusIndicatorRotateLayout;
 import com.pili.rnpili.support.Jsons;
@@ -35,6 +30,24 @@ import com.qiniu.android.dns.NetworkInfo;
 import com.qiniu.android.dns.http.DnspodFree;
 import com.qiniu.android.dns.local.AndroidDnsServer;
 import com.qiniu.android.dns.local.Resolver;
+import com.qiniu.pili.droid.streaming.AVCodecType;
+import com.qiniu.pili.droid.streaming.CameraStreamingSetting;
+import com.qiniu.pili.droid.streaming.MediaStreamingManager;
+import com.qiniu.pili.droid.streaming.MicrophoneStreamingSetting;
+import com.qiniu.pili.droid.streaming.StreamingProfile;
+import com.qiniu.pili.droid.streaming.widget.AspectFrameLayout;
+import com.qiniu.pili.droid.streaming.CameraStreamingSetting;
+import com.qiniu.pili.droid.streaming.CameraStreamingSetting.CAMERA_FACING_ID;
+import com.qiniu.pili.droid.streaming.FrameCapturedCallback;
+import com.qiniu.pili.droid.streaming.MediaStreamingManager;
+import com.qiniu.pili.droid.streaming.MicrophoneStreamingSetting;
+import com.qiniu.pili.droid.streaming.StreamStatusCallback;
+import com.qiniu.pili.droid.streaming.StreamingPreviewCallback;
+import com.qiniu.pili.droid.streaming.StreamingProfile;
+import com.qiniu.pili.droid.streaming.StreamingSessionListener;
+import com.qiniu.pili.droid.streaming.StreamingState;
+import com.qiniu.pili.droid.streaming.StreamingStateChangedListener;
+import com.qiniu.pili.droid.streaming.SurfaceTextureCallback;
 
 import org.json.JSONObject;
 
@@ -51,8 +64,8 @@ import javax.annotation.Nullable;
 public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayout>
         implements
         CameraPreviewFrameView.Listener,
-        CameraStreamingManager.StreamingSessionListener,
-        CameraStreamingManager.StreamingStateListener,
+        StreamingSessionListener,
+        StreamingStateChangedListener,
         LifecycleEventListener
 
 
@@ -84,7 +97,7 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
     private static final int MSG_MUTE = 3;
     private static final int ZOOM_MINIMUM_WAIT_MILLIS = 33; //ms
 
-    protected CameraStreamingManager mCameraStreamingManager;
+    protected MediaStreamingManager mMediaStreamingManager;
     protected boolean mIsReady = false;
 
     private int mCurrentZoom = 0;
@@ -102,12 +115,12 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
 
 
     private void initializeStreamingSessionIfNeeded(AspectFrameLayout afl, CameraPreviewFrameView previewFrameView) {
-        if (mCameraStreamingManager == null) {
-            mCameraStreamingManager = new CameraStreamingManager(
+        if (mMediaStreamingManager == null) {
+            mMediaStreamingManager = new MediaStreamingManager(
                     context,
                     afl,
                     previewFrameView,
-                    CameraStreamingManager.EncodingType.SW_VIDEO_WITH_SW_AUDIO_CODEC);  // soft codec
+                    AVCodecType.SW_VIDEO_WITH_SW_AUDIO_CODEC);  // soft codec
             mProfile = new StreamingProfile();
             StreamingProfile.AudioProfile aProfile = new StreamingProfile.AudioProfile(44100, 96 * 1024); //audio sample rate, audio bitrate
             StreamingProfile.VideoProfile vProfile = new StreamingProfile.VideoProfile(30, 1000 * 1024, 48);//fps bps maxFrameInterval
@@ -136,9 +149,9 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
             microphoneSetting = new MicrophoneStreamingSetting();
             microphoneSetting.setBluetoothSCOEnabled(false);
 
-            mCameraStreamingManager.prepare(setting, microphoneSetting, mProfile);
-            mCameraStreamingManager.setStreamingStateListener(this);
-            mCameraStreamingManager.setStreamingSessionListener(this);
+            mMediaStreamingManager.prepare(setting, microphoneSetting, mProfile);
+            mMediaStreamingManager.setStreamingStateListener(this);
+            mMediaStreamingManager.setStreamingSessionListener(this);
             context.addLifecycleEventListener(this);
 
         }
@@ -172,12 +185,12 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
         piliStreamPreview.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View v) {
-                mCameraStreamingManager.resume();
+                mMediaStreamingManager.resume();
             }
 
             @Override
             public void onViewDetachedFromWindow(View v) {
-                mCameraStreamingManager.destroy();
+                mMediaStreamingManager.destroy();
             }
         });
 
@@ -195,7 +208,7 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
     @ReactProp(name = "stream")
     public void setStream(AspectFrameLayout view, @Nullable ReadableMap stream) {
         mProfile.setStream(new StreamingProfile.Stream(Jsons.readableMapToJson(stream)));
-        mCameraStreamingManager.setStreamingProfile(mProfile);
+        mMediaStreamingManager.setStreamingProfile(mProfile);
     }
 
     @ReactProp(name = "profile")
@@ -211,13 +224,13 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
         StreamingProfile.AVProfile avProfile = new StreamingProfile.AVProfile(vProfile, aProfile);
         mProfile.setAVProfile(avProfile);
         mProfile.setEncodingSizeLevel(encodingSize);
-        mCameraStreamingManager.setStreamingProfile(mProfile);
+        mMediaStreamingManager.setStreamingProfile(mProfile);
 
     }
 
     @ReactProp(name = "muted")
     public void setMuted(AspectFrameLayout view, boolean muted) {
-        mCameraStreamingManager.mute(muted);
+        mMediaStreamingManager.mute(muted);
     }
 
     @ReactProp(name = "zoom")
@@ -225,7 +238,7 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
         mCurrentZoom = zoom;
         mCurrentZoom = Math.min(mCurrentZoom, mMaxZoom);
         mCurrentZoom = Math.max(0, mCurrentZoom);
-        mCameraStreamingManager.setZoomValue(zoom);
+        mMediaStreamingManager.setZoomValue(zoom);
     }
 
     @ReactProp(name = "focus")
@@ -263,7 +276,7 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
             mRotateLayout.addView(indicator);
             mRotateLayout.setChild(indicator);
             piliStreamPreview.addView(mRotateLayout);
-            mCameraStreamingManager.setFocusAreaIndicator(mRotateLayout,
+            mMediaStreamingManager.setFocusAreaIndicator(mRotateLayout,
                     indicator);
         }
     }
@@ -273,50 +286,50 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
     }
 
     @Override
-    public void onStateChanged(int state, Object extra) {
+    public void onStateChanged(StreamingState state, Object extra) {
         switch (state) {
-            case CameraStreamingManager.STATE.PREPARING:
+            case PREPARING:
                 break;
-            case CameraStreamingManager.STATE.READY:
+            case READY:
                 mIsReady = true;
-                mMaxZoom = mCameraStreamingManager.getMaxZoom();
+                mMaxZoom = mMediaStreamingManager.getMaxZoom();
                 if (started) {
                     startStreaming();
                 }
                 mEventEmitter.receiveEvent(getTargetId(), Events.READY.toString(), Arguments.createMap());
                 break;
-            case CameraStreamingManager.STATE.CONNECTING:
+            case CONNECTING:
                 mEventEmitter.receiveEvent(getTargetId(), Events.CONNECTING.toString(), Arguments.createMap());
                 break;
-            case CameraStreamingManager.STATE.STREAMING:
+            case STREAMING:
                 mEventEmitter.receiveEvent(getTargetId(), Events.STREAMING.toString(), Arguments.createMap());
                 break;
-            case CameraStreamingManager.STATE.SHUTDOWN:
+            case SHUTDOWN:
                 mEventEmitter.receiveEvent(getTargetId(), Events.SHUTDOWN.toString(), Arguments.createMap());
                 break;
-            case CameraStreamingManager.STATE.IOERROR:
+            case IOERROR:
                 mEventEmitter.receiveEvent(getTargetId(), Events.IOERROR.toString(), Arguments.createMap());
                 break;
-            case CameraStreamingManager.STATE.UNKNOWN:
+            case UNKNOWN:
                 break;
-            case CameraStreamingManager.STATE.SENDING_BUFFER_EMPTY:
+            case SENDING_BUFFER_EMPTY:
                 break;
-            case CameraStreamingManager.STATE.SENDING_BUFFER_FULL:
+            case SENDING_BUFFER_FULL:
                 break;
-            case CameraStreamingManager.STATE.AUDIO_RECORDING_FAIL:
+            case AUDIO_RECORDING_FAIL:
                 break;
-            case CameraStreamingManager.STATE.OPEN_CAMERA_FAIL:
+            case OPEN_CAMERA_FAIL:
                 break;
-            case CameraStreamingManager.STATE.DISCONNECTED:
+            case DISCONNECTED:
                 mEventEmitter.receiveEvent(getTargetId(), Events.DISCONNECTED.toString(), Arguments.createMap());
                 break;
-            case CameraStreamingManager.STATE.CAMERA_SWITCHED:
+            case CAMERA_SWITCHED:
                 if (extra != null) {
                     Log.i(TAG, "current camera id:" + (Integer) extra);
                 }
                 Log.i(TAG, "camera switched");
                 break;
-            case CameraStreamingManager.STATE.TORCH_INFO:
+            case TORCH_INFO:
                 if (extra != null) {
                     final boolean isSupportedTorch = (Boolean) extra;
                     Log.i(TAG, "isSupportedTorch=" + isSupportedTorch);
@@ -338,15 +351,15 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
 
     @Override
     public boolean onRecordAudioFailedHandled(int err) {
-        mCameraStreamingManager.updateEncodingType(CameraStreamingManager.EncodingType.SW_VIDEO_CODEC);
-        mCameraStreamingManager.startStreaming();
+        mMediaStreamingManager.updateEncodingType(AVCodecType.SW_VIDEO_CODEC);
+        mMediaStreamingManager.startStreaming();
         return true;
     }
 
     @Override
     public boolean onRestartStreamingHandled(int err) {
         Log.i(TAG, "onRestartStreamingHandled");
-        return mCameraStreamingManager.startStreaming();
+        return mMediaStreamingManager.startStreaming();
     }
 
     @Override
@@ -368,7 +381,7 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
         if (mIsReady && focus) {
             setFocusAreaIndicator();
             try {
-                mCameraStreamingManager.doSingleTapUp((int) e.getX(), (int) e.getY());
+                mMediaStreamingManager.doSingleTapUp((int) e.getX(), (int) e.getY());
             } catch (Exception ex) {
                 Log.e(TAG, ex.getMessage());
             }
@@ -380,7 +393,7 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
 
     @Override
     public boolean onZoomValueChanged(float factor) {
-        if (mIsReady && mCameraStreamingManager.isZoomSupported()) {
+        if (mIsReady && mMediaStreamingManager.isZoomSupported()) {
             mCurrentZoom = (int) (mMaxZoom * factor);
             mCurrentZoom = Math.min(mCurrentZoom, mMaxZoom);
             mCurrentZoom = Math.max(0, mCurrentZoom);
@@ -395,31 +408,31 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
     }
 
 
-    @Override
-    public boolean onStateHandled(final int state, Object extra) {
-        switch (state) {
-            case CameraStreamingManager.STATE.SENDING_BUFFER_HAS_FEW_ITEMS:
-                return false;
-            case CameraStreamingManager.STATE.SENDING_BUFFER_HAS_MANY_ITEMS:
-                return false;
-        }
-        return false;
-    }
+//    @Override
+//    public boolean onStateHandled(final int state, Object extra) {
+//        switch (state) {
+//            case SENDING_BUFFER_HAS_FEW_ITEMS:
+//                return false;
+//            case SENDING_BUFFER_HAS_MANY_ITEMS:
+//                return false;
+//        }
+//        return false;
+//    }
 
 
     @Override
     public void onHostResume() {
-        mCameraStreamingManager.resume();
+        mMediaStreamingManager.resume();
     }
 
     @Override
     public void onHostPause() {
-        mCameraStreamingManager.pause();
+        mMediaStreamingManager.pause();
     }
 
     @Override
     public void onHostDestroy() {
-        mCameraStreamingManager.destroy();
+        mMediaStreamingManager.destroy();
     }
 
 
@@ -431,16 +444,16 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            boolean res = mCameraStreamingManager.startStreaming();
+                            boolean res = mMediaStreamingManager.startStreaming();
                             Log.i(TAG, "res:" + res);
                         }
                     }).start();
                     break;
                 case MSG_STOP_STREAMING:
-                    boolean res = mCameraStreamingManager.stopStreaming();
+                    boolean res = mMediaStreamingManager.stopStreaming();
                     break;
                 case MSG_SET_ZOOM:
-                    mCameraStreamingManager.setZoomValue(mCurrentZoom);
+                    mMediaStreamingManager.setZoomValue(mCurrentZoom);
                     break;
                 default:
                     Log.e(TAG, "Invalid message");

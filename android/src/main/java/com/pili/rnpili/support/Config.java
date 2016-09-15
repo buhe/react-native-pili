@@ -2,7 +2,8 @@ package com.pili.rnpili.support;
 
 import android.content.pm.ActivityInfo;
 
-import com.pili.pldroid.streaming.StreamingProfile;
+import com.qiniu.pili.droid.streaming.StreamingProfile;
+
 
 /**
  * Created by jerikc on 15/12/8.

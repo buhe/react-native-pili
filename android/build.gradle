@@ -22,8 +22,9 @@ android {
 dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.qiniu:happy-dns:0.2.5'
-    compile files('libs/pldroid-camera-streaming-1.6.0.jar')
-    compile files('libs/pldroid-player-1.2.2.jar')
     compile 'com.facebook.react:react-native:+'
+    compile 'com.qiniu:happy-dns:0.2.+'
+    compile 'com.qiniu.pili:pili-android-qos:0.8.+'
+    compile files('libs/pldroid-media-streaming-2.0.2.jar')
+    compile files('libs/pldroid-player-1.3.2.jar')
 }
