@@ -21,7 +21,6 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.pili.rnpili.support.Config;
-import com.pili.rnpili.support.FocusIndicatorRotateLayout;
 import com.pili.rnpili.support.Jsons;
 import com.pili.rnpili.support.RotateLayout;
 import com.qiniu.android.dns.DnsManager;
@@ -263,22 +262,22 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
     }
 
     protected void setFocusAreaIndicator() {
-        if (mRotateLayout == null) {
-            mRotateLayout = new FocusIndicatorRotateLayout(context, null);
-            mRotateLayout
-                    .setLayoutParams(new FrameLayout.LayoutParams(
-                            FrameLayout.LayoutParams.WRAP_CONTENT,
-                            FrameLayout.LayoutParams.WRAP_CONTENT,
-                            Gravity.CENTER
-                    ));
-            View indicator = new View(context);
-            indicator.setLayoutParams(new ViewGroup.LayoutParams(120, 120));
-            mRotateLayout.addView(indicator);
-            mRotateLayout.setChild(indicator);
-            piliStreamPreview.addView(mRotateLayout);
-            mMediaStreamingManager.setFocusAreaIndicator(mRotateLayout,
-                    indicator);
-        }
+//        if (mRotateLayout == null) {
+//            mRotateLayout = new FocusIndicatorRotateLayout(context, null);
+//            mRotateLayout
+//                    .setLayoutParams(new FrameLayout.LayoutParams(
+//                            FrameLayout.LayoutParams.WRAP_CONTENT,
+//                            FrameLayout.LayoutParams.WRAP_CONTENT,
+//                            Gravity.CENTER
+//                    ));
+//            View indicator = new View(context);
+//            indicator.setLayoutParams(new ViewGroup.LayoutParams(120, 120));
+//            mRotateLayout.addView(indicator);
+//            mRotateLayout.setChild(indicator);
+//            piliStreamPreview.addView(mRotateLayout);
+//            mMediaStreamingManager.setFocusAreaIndicator(mRotateLayout,
+//                    indicator);
+//        }
     }
 
     public int getTargetId() {

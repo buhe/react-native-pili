@@ -14,7 +14,7 @@ import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.pili.pldroid.player.AVOptions;
 import com.pili.pldroid.player.PLMediaPlayer;
 import com.pili.pldroid.player.widget.PLVideoView;
-import com.pili.rnpili.support.MediaController;
+//import com.pili.rnpili.support.MediaController;
 
 import java.util.Map;
 
@@ -132,11 +132,11 @@ public class PiliPlayerViewManager extends SimpleViewManager<PLVideoView> implem
 
         mVideoView.setVideoPath(uri);
 
-        if (mediaController) {
-            // You can also use a custom `MediaController` widget
-            MediaController mMediaController = new MediaController(reactContext, false, isLiveStreaming(uri));
-            mVideoView.setMediaController(mMediaController);
-        }
+//        if (mediaController) {
+//            // You can also use a custom `MediaController` widget
+//            MediaController mMediaController = new MediaController(reactContext, false, isLiveStreaming(uri));
+//            mVideoView.setMediaController(mMediaController);
+//        }
 
     }
 
