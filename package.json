@@ -1,0 +1,32 @@
+{
+  "name": "react-native-pili",
+  "version": "0.1.0",
+  "description": "Pili Streaming Cloud React Native SDK",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/buhe/react-native-pili.git"
+  },
+  "keywords": [
+    "React",
+    "Native",
+    "SDK",
+    "Qiniu",
+    "Pili",
+    "Stream",
+    "Cloud"
+  ],
+  "author": "buhe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/buhe/react-native-pili/issues"
+  },
+  "homepage": "https://github.com/buhe/react-native-pili#readme",
+  "devDependencies": {
+    "react": "^0.14.8",
+    "react-native": "^0.24.1"
+  }
+}
