@@ -52,6 +52,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
@@ -204,9 +205,13 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
         return "RCTStreaming";
     }
 
-    @ReactProp(name = "stream")
-    public void setStream(AspectFrameLayout view, @Nullable ReadableMap stream) {
-        mProfile.setStream(new StreamingProfile.Stream(Jsons.readableMapToJson(stream)));
+    @ReactProp(name = "rtmpURL")
+    public void setRtmpURL(AspectFrameLayout view, @Nullable String rtmpURL) {
+        try {
+            mProfile.setPublishUrl(rtmpURL);
+        } catch (URISyntaxException e) {
+            Log.e(TAG, "RTMP URL is syntax error.");
+        }
         mMediaStreamingManager.setStreamingProfile(mProfile);
     }
 
