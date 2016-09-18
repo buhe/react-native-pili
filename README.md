@@ -1,46 +1,36 @@
 #Pili Streaming Cloud React Native SDK
+
+##Introduction
+
+这*可能*是**第一个**在 React Native 上实现全功能的直播 SDK 了，底层基于 [Pili-SDK](https://github.com/pili-engineering)，把 iOS 和 Android 的 API 尽量统一。
+
+2.0 版本为了更容易集成第三方 SDK ，对原有的 React Native 项目进行了改造，iOS 的依赖采用了 Cocoapod 进行管理，当然你也可以采用原来的方式，毕竟是可以共存的。为此准备了一个 [Starter Kit](https://github.com/buhe/pili-startkit) 可以查看如何进行集成。
+
+
 ##Installation
+
+```bash
+git clone https://github.com/buhe/pili-startkit YourPorjectName
+
+cd YourPorjectName/js && npm install
+
+cd ../ios && pod install
 ```
-Run npm install react-native-pili --save
+
+###Javascript
+
+```bash
+cd YourPorjectName/js
+npm start
 ```
+
 ###iOS
-1. In XCode, in the project navigator, right click Libraries ➜ Add Files to [your project's name]
-2. Go to node_modules ➜ react-native-pili ➜ RCTPili and add RCTPili.xcodeproj
-3. In XCode, in the project navigator, select your project. Add libPTCPili.a ,libz.tbd,libc++.tbd to your project's Build Phases ➜ Link Binary With Libraries
-4. Run your project (Cmd+R)
+1. Open ios/YourPorjectName.xcworkspace
+2. Just run your project (Cmd+R)
 
 ###Android
-
-**android/settings.gradle**
-```
-include ':react-native-pili'
-project(':react-native-pili').projectDir = new File(settingsDir, '../node_modules/react-native-pili/android')
-```
-**android/app/build.gradle**
-```
-dependencies {
-    ...
-    compile project(':react-native-pili')
-}
-```
-**MainActivity.java**
-
-On top, where imports are:
-```java
-import com.pili.rnpili.PiliPackage;
-```
-
-Modify getPackages method
-```java
- @Override
-    protected List<ReactPackage> getPackages() {
-        return Arrays.<ReactPackage>asList(
-                new MainReactPackage(),
-                new PiliPackage(this)
-        );
-    }
-```
-
+1. Open android use Android Studio
+2. Just run your project
 
 ##TODO
 - [x] Android Player
@@ -48,25 +38,12 @@ Modify getPackages method
 - [x] iOS Player
 - [x] iOS Streaming
 - [ ] 美颜和水印支持
-- [ ] 单元测试
-- [ ] 自定义实时滤镜支持
 
 ##Usage
 ###1. 推流
 ```javascript
 <Streaming
-    stream={{ 
-        id:"xxx", //pili id
-        title:"title", //pili title
-        hub:"hubname", //pili hub name
-        publishKey:"<PK>", //pili key
-        publishSecurity:"static", //pili secrity policy (static or dynamic)
-        hosts:{
-          publish:{ //pili Streaming url (support rtmp)
-            rtmp:"pili-publish.pilitest.qiniucdn.com"
-          }
-        }
-        }}
+    rtmpURL={"rtmp://pili-publish.pilitest.qiniucdn.com/pilitest/demo_test?key=6eeee8a82246636e"}
     style={{
         height:400,
         width:400,
@@ -98,7 +75,6 @@ Modify getPackages method
 <Player
   source={{
     uri:"rtmp://pili-live-rtmp.pilitest.qiniucdn.com/pilitest/xxx",
-    controller: true, //Controller ui  Android only
     timeout: 10 * 1000, //live streaming timeout (ms) Android only
     live:true, //live streaming ? Android only
     hardCodec:false, //hard codec [recommended false]  Android only
@@ -117,9 +93,8 @@ Modify getPackages method
     />
 ```
 ##Release Note
-##0.1.0
+##2.1.1
 - [x] Android Player
 - [x] Android Streaming
 - [x] iOS Player
 - [x] iOS Streaming 
-实现了所有基本 API ,处于可以尝试使用阶段，后续会用实际项目推动 SDK 完善
