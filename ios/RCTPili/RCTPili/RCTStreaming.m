@@ -46,7 +46,6 @@ const char *networkStatus[] = {
         _muted = NO;
         _focus = NO;
 
-//        self.reconnectCount = 0;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
         self.internetReachability = [Reachability reachabilityForInternetConnection];
         [self.internetReachability startNotifier];
@@ -62,34 +61,26 @@ const char *networkStatus[] = {
                 videoSize = CGSizeMake(640 , 480);
             }
         }
-        self.videoStreamingConfigurations = @[
-                                              [[PLVideoStreamingConfiguration alloc] initWithVideoSize:videoSize expectedSourceVideoFrameRate:15 videoMaxKeyframeInterval:45 averageVideoBitRate:800 * 1000 videoProfileLevel:AVVideoProfileLevelH264Baseline31],
-                                              [[PLVideoStreamingConfiguration alloc] initWithVideoSize:CGSizeMake(800 , 480) expectedSourceVideoFrameRate:24 videoMaxKeyframeInterval:72 averageVideoBitRate:800 * 1000 videoProfileLevel:AVVideoProfileLevelH264Baseline31],
-                                              [[PLVideoStreamingConfiguration alloc] initWithVideoSize:videoSize expectedSourceVideoFrameRate:30 videoMaxKeyframeInterval:90 averageVideoBitRate:800 * 1000 videoProfileLevel:AVVideoProfileLevelH264Baseline31],
-                                              ];
-
         self.sessionQueue = dispatch_queue_create("pili.queue.streaming", DISPATCH_QUEUE_SERIAL);
     }
     
     return self;
 };
 
-- (void) setStream:(NSDictionary *)source
+- (void) setRtmpURL:(NSString *)rtmpURL
 {
-    _source = source;//FIXME
+    _rtmpURL = rtmpURL;
     [self setSourceAndProfile];
 }
 
 - (void)setProfile:(NSDictionary *)profile{
-    _profile = profile;//FIXME
+    _profile = profile;
     [self setSourceAndProfile];
 }
 
 - (void) setSourceAndProfile{
-    if(self.profile && self.source){
+    if(self.profile && self.rtmpURL){
         
-        
-        PLStream *stream = [PLStream streamWithJSON:self.source];
         void (^permissionBlock)(void) = ^{
             dispatch_async(self.sessionQueue, ^{
                 NSDictionary *video = self.profile[@"video"];
@@ -107,15 +98,13 @@ const char *networkStatus[] = {
                 PLVideoStreamingConfiguration *videoStreamingConfiguration = [[PLVideoStreamingConfiguration alloc] initWithVideoSize:CGSizeMake(width, height) expectedSourceVideoFrameRate:fps videoMaxKeyframeInterval:maxFrameInterval averageVideoBitRate:bps videoProfileLevel:AVVideoProfileLevelH264Baseline31];
                 
                 PLVideoCaptureConfiguration *videoCaptureConfiguration = [PLVideoCaptureConfiguration defaultConfiguration];
-//                PLVideoCaptureConfiguration *videoCaptureConfiguration = [PLVideoCaptureConfiguration defaultConfiguration];
+
                 PLAudioCaptureConfiguration *audioCaptureConfiguration = [PLAudioCaptureConfiguration defaultConfiguration];
-                // 视频编码配置
-//                PLVideoStreamingConfiguration *videoStreamingConfiguration = [PLVideoStreamingConfiguration defaultConfiguration];
                 // 音频编码配置
                 PLAudioStreamingConfiguration *audioStreamingConfiguration = [PLAudioStreamingConfiguration defaultConfiguration];
                 AVCaptureVideoOrientation orientation = (AVCaptureVideoOrientation)(([[UIDevice currentDevice] orientation] <= UIDeviceOrientationLandscapeRight && [[UIDevice currentDevice] orientation] != UIDeviceOrientationUnknown) ? [[UIDevice currentDevice] orientation]: UIDeviceOrientationPortrait);
                 // 推流 session
-                self.session = [[PLCameraStreamingSession alloc] initWithVideoCaptureConfiguration:videoCaptureConfiguration audioCaptureConfiguration:audioCaptureConfiguration videoStreamingConfiguration:videoStreamingConfiguration audioStreamingConfiguration:audioStreamingConfiguration stream:stream videoOrientation:orientation];
+                self.session = [[PLCameraStreamingSession alloc] initWithVideoCaptureConfiguration:videoCaptureConfiguration audioCaptureConfiguration:audioCaptureConfiguration videoStreamingConfiguration:videoStreamingConfiguration audioStreamingConfiguration:audioStreamingConfiguration stream:nil videoOrientation:orientation];
                 self.session.delegate = self;
                 self.session.bufferDelegate = self;
                 //            UIImage *waterMark = [UIImage imageNamed:@"qiniu.png"];
@@ -225,8 +214,11 @@ const char *networkStatus[] = {
 
 - (void)startSession {
     dispatch_async(self.sessionQueue, ^{
-        [self.session startWithCompleted:^(BOOL success) {
-            NSLog(@"success ");
+        NSURL *streamURL = [NSURL URLWithString:self.rtmpURL];
+        [self.session startWithPushURL:streamURL feedback:^(PLStreamStartStateFeedback feedback) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSLog(@"success ");
+            });
         }];
     });
 }

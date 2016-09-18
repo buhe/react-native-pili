@@ -67,7 +67,7 @@ class Streaming extends Component {
 }
 
 Streaming.propTypes = {
-  stream: PropTypes.object,
+  rtmpURL: PropTypes.string,
   muted: PropTypes.bool,
   zoom: PropTypes.number,
   focus: PropTypes.bool,

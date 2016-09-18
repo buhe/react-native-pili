@@ -18,11 +18,9 @@
 
 @property (nonatomic, strong) PLCameraStreamingSession  *session;
 @property (nonatomic, strong) dispatch_queue_t sessionQueue;
-@property (nonatomic, strong) NSArray<PLVideoCaptureConfiguration *>   *videoCaptureConfigurations;
-@property (nonatomic, strong) NSArray<PLVideoStreamingConfiguration *>   *videoStreamingConfigurations;
 @property (nonatomic, strong) Reachability *internetReachability;
 @property (nonatomic, strong) NSDictionary  *profile;
-@property (nonatomic, strong) NSDictionary  *source;
+@property (nonatomic, strong) NSString *rtmpURL;
 
 - (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher NS_DESIGNATED_INITIALIZER;
 

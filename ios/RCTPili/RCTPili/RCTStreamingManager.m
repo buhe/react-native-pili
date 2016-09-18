@@ -36,7 +36,7 @@ RCT_EXPORT_MODULE();
     return dispatch_get_main_queue();
 }
 
-RCT_EXPORT_VIEW_PROPERTY(stream, NSDictionary);
+RCT_EXPORT_VIEW_PROPERTY(rtmpURL, NSString);
 RCT_EXPORT_VIEW_PROPERTY(profile, NSDictionary);
 RCT_EXPORT_VIEW_PROPERTY(started, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(muted, BOOL);

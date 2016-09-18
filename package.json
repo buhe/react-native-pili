@@ -1,15 +1,60 @@
 {
-  "name": "react-native-pili",
-  "version": "2.0.1",
+  "_args": [
+    [
+      "react-native-pili@^2.0.1",
+      "/Users/guguyanhua/github/pili-startkit/js"
+    ]
+  ],
+  "_from": "react-native-pili@>=2.0.1 <3.0.0",
+  "_id": "react-native-pili@2.0.1",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/react-native-pili",
+  "_nodeVersion": "6.1.0",
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/react-native-pili-2.0.1.tgz_1473937110588_0.6419671832118183"
+  },
+  "_npmUser": {
+    "email": "bugu1986@126.com",
+    "name": "bugu1986"
+  },
+  "_npmVersion": "3.8.6",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "react-native-pili",
+    "raw": "react-native-pili@^2.0.1",
+    "rawSpec": "^2.0.1",
+    "scope": null,
+    "spec": ">=2.0.1 <3.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_shasum": "828e6e07f3712b6d4b21111394d2d3642cc9b47f",
+  "_shrinkwrap": null,
+  "_spec": "react-native-pili@^2.0.1",
+  "_where": "/Users/guguyanhua/github/pili-startkit/js",
+  "author": {
+    "name": "buhe"
+  },
+  "bugs": {
+    "url": "https://github.com/buhe/react-native-pili/issues"
+  },
+  "dependencies": {},
   "description": "Pili Streaming Cloud React Native SDK",
-  "main": "index.js",
-  "scripts": {
-    "test": "npm test"
+  "devDependencies": {
+    "react": "^0.14.8",
+    "react-native": "^0.24.1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/buhe/react-native-pili.git"
+  "directories": {},
+  "dist": {
+    "shasum": "828e6e07f3712b6d4b21111394d2d3642cc9b47f",
+    "tarball": "https://registry.npmjs.org/react-native-pili/-/react-native-pili-2.0.1.tgz"
   },
+  "gitHead": "643108e2b7599bdbf8be1c484aa7fdb2cf93ce30",
+  "homepage": "https://github.com/buhe/react-native-pili#readme",
   "keywords": [
     "React",
     "Native",
@@ -19,14 +64,23 @@
     "Stream",
     "Cloud"
   ],
-  "author": "buhe",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/buhe/react-native-pili/issues"
+  "main": "index.js",
+  "maintainers": [
+    {
+      "email": "bugu1986@126.com",
+      "name": "bugu1986"
+    }
+  ],
+  "name": "react-native-pili",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/buhe/react-native-pili.git"
   },
-  "homepage": "https://github.com/buhe/react-native-pili#readme",
-  "devDependencies": {
-    "react": "^0.14.8",
-    "react-native": "^0.24.1"
-  }
+  "scripts": {
+    "test": "npm test"
+  },
+  "version": "2.0.1"
 }
