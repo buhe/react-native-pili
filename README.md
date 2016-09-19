@@ -25,7 +25,7 @@ npm start
 ```
 
 ###iOS
-1. Open ios/YourPorjectName.xcworkspace
+1. Open ios/YourPorjectName.xcworkspace (这里请注意是打开 .xcworkspace!请确认)
 2. Just run your project (Cmd+R)
 
 ###Android
