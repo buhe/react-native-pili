@@ -190,6 +190,7 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
 
             @Override
             public void onViewDetachedFromWindow(View v) {
+                mMediaStreamingManager.stopStreaming();
                 mMediaStreamingManager.destroy();
             }
         });
@@ -431,7 +432,9 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
 
     @Override
     public void onHostPause() {
+        mHandler.removeCallbacksAndMessages(null);
         mMediaStreamingManager.pause();
+
     }
 
     @Override
