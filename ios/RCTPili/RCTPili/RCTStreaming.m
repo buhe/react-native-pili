@@ -17,6 +17,7 @@
     BOOL _started;
     BOOL _muted;
     BOOL _focus;
+    NSString *_camera;
 }
 
 const char *stateNames[] = {
@@ -45,6 +46,7 @@ const char *networkStatus[] = {
         _started = YES;
         _muted = NO;
         _focus = NO;
+        _camera = @"front";
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
         self.internetReachability = [Reachability reachabilityForInternetConnection];
@@ -191,6 +193,16 @@ const char *networkStatus[] = {
 
 -(void)setZoom:(NSNumber*) zoom {
     self.session.videoZoomFactor = [zoom integerValue];
+}
+
+-(void)setCamera:(NSString*)camera{
+    if([camera isEqualToString:@"front"] || [camera isEqualToString:@"back"]){
+        if(![camera isEqualToString:_camera]){
+            _camera = camera;
+            [self.session toggleCamera];
+        }
+    }
+    
 }
 
 

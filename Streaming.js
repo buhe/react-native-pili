@@ -68,6 +68,7 @@ class Streaming extends Component {
 
 Streaming.propTypes = {
   rtmpURL: PropTypes.string,
+  camera: PropTypes.oneOf(['front','back']),
   muted: PropTypes.bool,
   zoom: PropTypes.number,
   focus: PropTypes.bool,
