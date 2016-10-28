@@ -33,6 +33,7 @@ import com.qiniu.pili.droid.streaming.AVCodecType;
 import com.qiniu.pili.droid.streaming.CameraStreamingSetting;
 import com.qiniu.pili.droid.streaming.MediaStreamingManager;
 import com.qiniu.pili.droid.streaming.MicrophoneStreamingSetting;
+import com.qiniu.pili.droid.streaming.StreamingEnv;
 import com.qiniu.pili.droid.streaming.StreamingProfile;
 import com.qiniu.pili.droid.streaming.widget.AspectFrameLayout;
 import com.qiniu.pili.droid.streaming.CameraStreamingSetting;
@@ -110,11 +111,11 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
     private CameraPreviewFrameView previewFrameView;
     private AspectFrameLayout piliStreamPreview;
     private boolean focus = false;
-    private boolean started = true;//default start attach on parent view
+    private boolean started = false;//default start attach on parent view
     private RCTEventEmitter mEventEmitter;
 
 
-    private void initializeStreamingSessionIfNeeded(AspectFrameLayout afl, CameraPreviewFrameView previewFrameView) {
+    private void initializeStreamingSessionIfNeeded(AspectFrameLayout afl, CameraPreviewFrameView previewFrameView) throws URISyntaxException {
         if (mMediaStreamingManager == null) {
             mMediaStreamingManager = new MediaStreamingManager(
                     context,
@@ -126,6 +127,7 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
             StreamingProfile.VideoProfile vProfile = new StreamingProfile.VideoProfile(30, 1000 * 1024, 48);//fps bps maxFrameInterval
             StreamingProfile.AVProfile avProfile = new StreamingProfile.AVProfile(vProfile, aProfile);
             mProfile.setVideoQuality(StreamingProfile.VIDEO_QUALITY_HIGH3)
+//                    .setPublishUrl("rtmp://pili-publish.wantplus.cn/wantplus-1/bhjkhjgcnkknn?key=f4f380426f4bdb1a")
                     .setAudioQuality(StreamingProfile.AUDIO_QUALITY_MEDIUM2)
 //                .setPreferredVideoEncodingSize(960, 544)
                     .setEncodingSizeLevel(Config.ENCODING_LEVEL)
@@ -135,7 +137,8 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
                     .setDnsManager(getMyDnsManager())
                     .setStreamStatusConfig(new StreamingProfile.StreamStatusConfig(3))
 //                .setEncodingOrientation(StreamingProfile.ENCODING_ORIENTATION.PORT)
-                    .setSendingBufferProfile(new StreamingProfile.SendingBufferProfile(0.2f, 0.8f, 3.0f, 20 * 1000));
+                    .setSendingBufferProfile(new StreamingProfile.SendingBufferProfile(0.2f, 0.8f, 3.0f, 20 * 1000))
+            ;
 
             setting = new CameraStreamingSetting();
             setting.setCameraId(Camera.CameraInfo.CAMERA_FACING_BACK)
@@ -148,10 +151,10 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
 
             microphoneSetting = new MicrophoneStreamingSetting();
             microphoneSetting.setBluetoothSCOEnabled(false);
-
-            mMediaStreamingManager.prepare(setting, microphoneSetting, mProfile);
             mMediaStreamingManager.setStreamingStateListener(this);
             mMediaStreamingManager.setStreamingSessionListener(this);
+            mMediaStreamingManager.prepare(setting, microphoneSetting, mProfile);
+
             context.addLifecycleEventListener(this);
 
         }
@@ -170,6 +173,7 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
     @Override
     public AspectFrameLayout createViewInstance(ThemedReactContext context) {
         this.context = context;
+        StreamingEnv.init(context.getApplicationContext());
         mEventEmitter = context.getJSModule(RCTEventEmitter.class);
 
         piliStreamPreview = new AspectFrameLayout(context);
@@ -180,7 +184,11 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
         previewFrameView.setListener(this);
         previewFrameView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         piliStreamPreview.addView(previewFrameView);
-        initializeStreamingSessionIfNeeded(piliStreamPreview, previewFrameView);
+        try {
+            initializeStreamingSessionIfNeeded(piliStreamPreview, previewFrameView);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
 
         piliStreamPreview.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
@@ -190,8 +198,11 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
 
             @Override
             public void onViewDetachedFromWindow(View v) {
+                mHandler.removeCallbacksAndMessages(null);
+                mMediaStreamingManager.pause();
                 mMediaStreamingManager.stopStreaming();
                 mMediaStreamingManager.destroy();
+                mMediaStreamingManager = null;
             }
         });
 
@@ -204,6 +215,18 @@ public class PiliStreamingViewManager extends SimpleViewManager<AspectFrameLayou
      */
     public String getName() {
         return "RCTStreaming";
+    }
+
+    @ReactProp(name = "camera")
+    public void setCamera(AspectFrameLayout view, @Nullable String camera){
+        if(camera.equals("front")){
+            mMediaStreamingManager.switchCamera(CAMERA_FACING_ID.CAMERA_FACING_FRONT);
+        }else if(camera.equals("back")){
+            mMediaStreamingManager.switchCamera(CAMERA_FACING_ID.CAMERA_FACING_BACK);
+        }else{
+
+        }
+
     }
 
     @ReactProp(name = "rtmpURL")
