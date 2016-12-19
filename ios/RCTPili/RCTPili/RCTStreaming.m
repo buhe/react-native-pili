@@ -108,7 +108,7 @@ const char *networkStatus[] = {
                 // 推流 session
                 self.session = [[PLCameraStreamingSession alloc] initWithVideoCaptureConfiguration:videoCaptureConfiguration audioCaptureConfiguration:audioCaptureConfiguration videoStreamingConfiguration:videoStreamingConfiguration audioStreamingConfiguration:audioStreamingConfiguration stream:nil videoOrientation:orientation];
                 self.session.delegate = self;
-                self.session.bufferDelegate = self;
+                
                 //            UIImage *waterMark = [UIImage imageNamed:@"qiniu.png"];
                 //            PLFilterHandler handler = [self.session addWaterMark:waterMark origin:CGPointMake(100, 300)];
                 //            self.filterHandlers = [@[handler] mutableCopy];//TODO -  水印暂时注释

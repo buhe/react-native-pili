@@ -90,7 +90,6 @@ const char *audioNetworkStatus[] = {
                 // 推流 session
                 self.session = [[PLCameraStreamingSession alloc] initWithVideoCaptureConfiguration:nil audioCaptureConfiguration:audioCaptureConfiguration videoStreamingConfiguration:nil audioStreamingConfiguration:audioStreamingConfiguration stream:nil videoOrientation:orientation];
                 self.session.delegate = self;
-                self.session.bufferDelegate = self;
  
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
