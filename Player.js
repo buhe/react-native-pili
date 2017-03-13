@@ -35,7 +35,7 @@ class Player extends Component {
 
 
   _onError(event) {
-    this.props.onError && this.props.onError(event.nativeEvent);
+    this.props.onPlayerError && this.props.onPlayerError(event.nativeEvent);
   }
 
   _onPlaying(event) {
@@ -48,7 +48,7 @@ class Player extends Component {
       onLoading: this._onLoading,
       onPaused: this._onPaused,
       onShutdown: this._onShutdown,
-      onError: this._onError,
+      onPlayerError: this._onPlayerError,
       onPlaying: this._onPlaying,
     });
     return (
@@ -73,7 +73,7 @@ Player.propTypes = {
   onLoading: PropTypes.func,
   onPaused: PropTypes.func,
   onShutdown: PropTypes.func,
-  onError: PropTypes.func,
+  onPlayerError: PropTypes.func,
   onPlaying: PropTypes.func,
   ...View.propTypes,
 }
