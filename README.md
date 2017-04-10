@@ -13,6 +13,7 @@ This lib dependency  PLMediaStreamingKit (2.1.1) and PLPlayerKit (2.2.4) , the l
 
 ```bash
 git clone https://github.com/buhe/pili-startkit YourPorjectName
+npm install git+git@github.com:ismjt/react-native-pili.git#master --save
 
 cd YourPorjectName/js && npm install
 
