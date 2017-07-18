@@ -35,13 +35,14 @@ public class PiliPlayerViewManager extends SimpleViewManager<PLVideoView> implem
     private static final int MEDIA_INFO_BUFFERING_END = 702;
     private static final int MEDIA_INFO_AUDIO_RENDERING_START = 10002;
     private boolean started;
+    private boolean destory;
     private int aspectRatio;
 
     public enum Events {
         LOADING("onLoading"),
         PAUSE("onPaused"),
         SHUTDOWN("onShutdown"),
-        ERROR("onError"),
+        ERROR("onPlayerError"),
         PLAYING("onPlaying");
 
         private final String mName;
@@ -161,6 +162,14 @@ public class PiliPlayerViewManager extends SimpleViewManager<PLVideoView> implem
         } else {
             mVideoView.pause();
             mEventEmitter.receiveEvent(getTargetId(), Events.PAUSE.toString(), Arguments.createMap());
+        }
+    }
+    
+    @ReactProp(name = "destory")
+    public void setDestory(PLVideoView mVideoView,  boolean destory) {
+        this.destory = destory;
+        if (destory) {
+            mEventEmitter.receiveEvent(getTargetId(), Events.SHUTDOWN.toString(), Arguments.createMap());
         }
     }
 
