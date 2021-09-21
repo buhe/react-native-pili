@@ -1,8 +1,9 @@
-#Pili Streaming Cloud React Native SDK
+# Deprecated
+# Pili Streaming Cloud React Native SDK
 
-##Introduction
+## Introduction
 
-###Warning
+### Warning
 
 This lib dependency  PLMediaStreamingKit (2.1.1) and PLPlayerKit (2.2.4) , the latest native sdk break origin API, i will match the latest version be free..
 
@@ -15,7 +16,7 @@ This may be the **first** React Native to achieve full-featured live SDK, the bo
 2.0 version In order to more easily integrate third-party SDK, the original React Native project has been modified, iOS rely on the use of Cocoapod management, of course, you can also use the original way, after all, can coexist. Specifically, you can see how to integrate with AirApps (https://github.com/airapps/airapps). A simple example of a project is [react-native-pili] (https://github.com/airapps/react-native-living) 
 
 
-##Installation
+## Installation
 
 ```bash
 git clone https://github.com/buhe/pili-startkit YourProjectName
@@ -25,14 +26,14 @@ cd YourProjectName/js && npm install
 cd ../ios && pod install
 ```
 
-###Javascript
+### Javascript
 
 ```bash
 cd YourProjectName/js
 npm start
 ```
 
-###iOS
+### iOS
 1. Open ios/YourProjectName.xcworkspace (这里请注意是打开 .xcworkspace!请确认) (Please note that it opens .xcworkspace! Confirm it does)
 2. Just run your project (Cmd+R)
 3. 如果是 iOS 10 需要在 info 中额外添加如下权限: (If it is iOS 10 you need to add the following additional auth in info:)
@@ -49,19 +50,19 @@ npm start
 ref: [iOS 10](http://www.jianshu.com/p/c212cde86877)
 
 
-###Android
+### Android
 1. Open android use Android Studio
 2. Just run your project
 
-##TODO
+## TODO
 - [x] Android Player
 - [x] Android Streaming
 - [x] iOS Player
 - [x] iOS Streaming
 - [ ] 美颜和水印支持 (Design and watermark support)
 
-##Usage
-###1. 推流 (Streaming)
+## Usage
+### 1. 推流 (Streaming)
 ```javascript
 <Streaming
     rtmpURL={"rtmp://pili-publish.pilitest.qiniucdn.com/pilitest/demo_test?key=6eeee8a82246636e"}
@@ -91,7 +92,7 @@ ref: [iOS 10](http://www.jianshu.com/p/c212cde86877)
     onDisconnected={()=>{}} //onDisconnected event
     />
 ```
-###2. 直播播放 (Live player)
+### 2. 直播播放 (Live player)
 ```javascript
 <Player
   source={{
@@ -113,8 +114,8 @@ ref: [iOS 10](http://www.jianshu.com/p/c212cde86877)
     onPlaying={()=>{}} //play event
     />
 ```
-##Release Note
-##2.1.1
+## Release Note
+## 2.1.1
 - [x] Android Player
 - [x] Android Streaming
 - [x] iOS Player
